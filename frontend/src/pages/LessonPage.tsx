@@ -9,11 +9,11 @@ import { generateLessonMarkdown } from '../dummydata/dummyMD'
 // Mock lesson content (you can replace with fetched content later)
 const mockLesson = lessons[0]
 
-export const LessonPage: React.FC<{ _lesson?: Lesson }> = (_lesson) => {
+export const LessonPage: React.FC<{ lesson?: Lesson }> = ({ lesson: propLesson }) => {
   const { id } = useParams()
   const [completed, setCompleted] = useState(false)
 
-  const lesson = lessons.find(l => l.id === Number(id)) ?? mockLesson
+  const lesson = propLesson || lessons.find(l => l.id === Number(id)) || mockLesson
   const markdownContent = generateLessonMarkdown(lesson.title, lesson.id)
 
   // Map difficulty → color pill

@@ -1,5 +1,4 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
 import LessonList from '../components/LessonList'
 import Card from '../components/Card'
 import Button from '../components/Button'
@@ -12,9 +11,8 @@ interface CourseDetailsProps {
 }
 
 export const CourseDetails: React.FC<CourseDetailsProps> = ({ course, lessons }) => {
-    const { id } = useParams()
     const lessonIndex = 0
-    const featuredLesson = lessons && lessons.length > 0 ? lessons[lessonIndex] : lessons
+    const featuredLesson = lessons && lessons.length > 0 ? lessons[lessonIndex] : null
 
     return (
         <div className="animate-fade-in max-w-4xl mx-auto space-y-8">
