@@ -1,102 +1,100 @@
-# Learnify API - Interview Exercise
+# 🐍 Backend Challenge: Help Barry Build His API!
 
-## Overview
-This is a Flask-based REST API for a learning platform called Learnify. The API provides endpoints to manage courses and lessons.
+## Barry's Backend Story
+Barry has been learning Flask and wants to build a robust API for his learning platform. He's set up the basic structure with clean architecture, but the API is missing some crucial pieces. Help Barry implement the missing endpoints and authentication so his frontend can finally connect to real data!
 
-## Current Implementation
-The following endpoints are already implemented:
-- `GET /api/courses` - Get all courses
-- `GET /api/courses/{id}` - Get course by ID
-- `GET /api/lessons` - Get all lessons
-- `GET /api/lessons/{id}` - Get lesson by ID
+## 🎯 Your Backend Mission
+Complete Barry's Flask API by implementing two key missing pieces:
 
-## Interview Tasks
+### Task 1: The Missing Lessons Endpoint
+Barry needs an endpoint to get all lessons for a specific course. The route is already set up, but the implementation is missing.
 
-### Task 1: Implement `/api/courses/{course_id}/lessons` Route
-**Objective:** Complete the implementation of the endpoint that returns all lessons for a specific course.
-
-**Current State:**
-- Route decorator is already added with `@require_api_key`
-- Method signature is defined but implementation is missing
-- TODO comments indicate what needs to be done
-
-**Requirements:**
+**What to implement:**
 - Route: `GET /api/courses/{course_id}/lessons`
-- Path parameter: `course_id` (integer)
-- Return: Array of lessons belonging to the specified course
-- Response format: JSON array of lesson objects
-- Error handling: Return 404 if course doesn't exist
+- Use the existing `SQLiteLessonRepository.get_by_course_id()` method
+- Return proper JSON response with lessons data
+- Handle cases where course doesn't exist (404 error)
+- Handle cases where course exists but has no lessons (empty array)
 
-**Implementation Steps:**
-1. Complete the `get_lessons_by_course` function in `src/api/routes/lesson_routes.py`
-2. Use the existing `SQLiteLessonRepository.get_by_course_id(course_id)` method
-3. Return lessons in the correct format matching the Lesson interface
-4. Add proper error handling for non-existent courses
-5. Handle case where course exists but has no lessons (return empty array)
+### Task 2: API Key Authentication
+Barry's API needs proper authentication. The middleware decorator exists but isn't implemented.
 
-### Task 2: Implement API Key Authentication Middleware
-**Objective:** Complete the API key validation logic in the authentication middleware.
+**What to implement:**
+- Check for `Authorization` header with `Bearer YOUR_API_KEY` format
+- Validate the API key against `Config.VALID_API_KEYS`
+- Return proper error responses for missing/invalid keys
+- Allow requests to proceed when authentication passes
 
-**Current State:**
-- Decorator framework is in place
-- Currently returns a placeholder error indicating validation is not implemented
-- TODO comments indicate what needs to be implemented
+## 🏗️ Architecture Overview
+Barry has organized his code following clean architecture principles:
 
-**Requirements:**
-- Check for `Authorization` header in requests
-- Header format: `Bearer YOUR_API_KEY`
-- Validate against `Config.VALID_API_KEYS`
-- Return appropriate error responses for missing/invalid keys
-
-**Implementation Steps:**
-1. Complete the `require_api_key` decorator in `src/api/middleware/auth_middleware.py`
-2. Extract the Authorization header from the request
-3. Validate the header format (must start with "Bearer ")
-4. Extract the API key token
-5. Check if the token exists in `Config.VALID_API_KEYS`
-6. Return proper JSON error responses with appropriate HTTP status codes
-7. Allow request to proceed if validation passes
-
-## Frontend Interfaces
-
-```typescript
-export interface Lesson {
-  id: number
-  title: string
-  content?: string
-  difficulty?: 'easy' | 'medium' | 'hard'
-  courseId?: number
-  imageUrl?: string
-  description?: string
-}
-
-export interface Course {
-  id: number
-  title: string
-  description?: {
-    intro: string
-    scope: string[]
-  }
-  category?: string
-  imageUrl?: string
-  difficulty?: 'beginner' | 'intermediate' | 'advanced'
-}
+```
+backend/src/
+├── api/                    # Flask routes and middleware
+├── application/           # Use cases and business logic
+├── domain/               # Entities and business rules
+└── infrastructure/       # Database and external concerns
 ```
 
-## Database
-The application uses SQLite with the following tables:
-- `courses`: Stores course information
-- `lessons`: Stores lesson information with foreign key to courses
-
-## Running the Application
+## 🚀 Getting Started
 ```bash
+cd backend
+pip install -r requirements.txt
 python run.py
 ```
 
-## API Documentation
-Access the Swagger UI at: `http://localhost:5000/docs`
+## 📋 Implementation Checklist
 
-## Testing
+### Task 1: Lessons by Course
+- [ ] Complete `get_lessons_by_course` function in `lesson_routes.py`
+- [ ] Use existing repository method
+- [ ] Return proper JSON format
+- [ ] Handle 404 for non-existent courses
+- [ ] Handle empty lesson arrays
+
+### Task 2: Authentication Middleware
+- [ ] Complete `require_api_key` decorator in `auth_middleware.py`
+- [ ] Extract Authorization header
+- [ ] Validate "Bearer " prefix
+- [ ] Check API key validity
+- [ ] Return appropriate error responses
+
+## 🧪 Testing Your Implementation
+
+### Manual Testing
+- Use the test API key: `test-api-key-12345`
+- Access Swagger docs at: `http://localhost:5000/docs`
+- Test all endpoints with proper authentication headers
+
+### Automated Testing
+Run the comprehensive test suite to verify your implementation:
+
+```bash
+cd backend
+python -m pytest tests/ -v
+```
+
+**Test Coverage Requirements:**
+- ✅ All 4 API endpoints functional
+- ✅ Authentication middleware working
+- ✅ Error handling for invalid inputs
+- ✅ Proper HTTP status codes
+- ✅ JSON response formats match specifications
+
+**Key Test Cases:**
+- Course CRUD operations (GET all, GET by ID)
+- Lesson retrieval (GET all, GET by ID, GET by course)
+- Authentication validation (valid/invalid keys, missing headers)
+- Error responses (404s, 401s for invalid requests)
+- Data integrity (course-lesson relationships)
+
+## 💡 Pro Tips
 - The database is pre-populated with 50 courses and ~400 lessons
-- All existing endpoints should work without authentication
-- Use the API documentation to test endpoints
+- All existing endpoints work without authentication for testing
+- Focus on clean, readable code that follows the existing patterns
+- Test edge cases like invalid course IDs and missing auth headers
+
+## 🎉 Help Barry Ship His API!
+By completing these tasks, you're helping Barry take a big step toward his web development dreams. Show him how to build production-ready APIs with proper authentication and error handling!
+
+**Remember:** Barry's counting on you to make his API production-ready! 🚀
