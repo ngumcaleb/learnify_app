@@ -1,4 +1,4 @@
-# Learnify Frontend Developer Take-Home Exercise
+# Learnify Take Home Assessment
 
 ## Overview
 This exercise evaluates your ability to work with React, TypeScript, API integration, and state management. You'll be working on a learning platform called Learnify that currently uses dummy data and needs to be enhanced with real API integration and Redux state management.
@@ -134,10 +134,7 @@ You must deploy both the backend API and frontend application to a hosting platf
 - **Database**: SQLite (as provided) or cloud database service
 
 ### Submission Deadline
-**Submission closes 4 days after receiving this test.**
-
-Current time: 2025-10-16T19:24:59.724Z UTC
-Deadline: 2025-10-20T19:24:59.724Z UTC
+Submission closes 4 days after receiving this test.
 
 ### How to Submit
 1. Ensure your application is hosted and fully functional
@@ -161,4 +158,4 @@ Deadline: 2025-10-20T19:24:59.724Z UTC
 - Phase 4: 30 minutes (bonus)
 - Testing & Deployment: 30 minutes
 
-Good luck! 🚀
+Good luck!
