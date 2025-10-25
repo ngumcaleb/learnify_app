@@ -11,7 +11,7 @@
 - [x] Course details shows lessons filtered by `courseId`.
 - [x] Lesson navigation works from course details.
 - [x] Handle invalid course/lesson IDs with graceful UI.
-
+   
 ### Phase 2: API Integration (Target: 90m)
 - [x] Configure API client (base URL + `Authorization: Bearer <API_KEY>`).
 - [x] Implement service functions: `getCourses()`, `getCourse(id)`, `getLessonsByCourse(courseId)`.
