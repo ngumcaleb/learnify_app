@@ -8,7 +8,7 @@ import './index.css'
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-      {/* [AI] Provide Redux store */}
+      {/* Provide Redux store */}
       <Provider store={store}>
         <BrowserRouter>
           <App />

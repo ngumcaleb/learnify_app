@@ -4,14 +4,14 @@ import Card from '../components/Card'
 import Button from '../components/Button'
 import ReactMarkdown from 'react-markdown'
 import type { Lesson } from '../types/lesson'
-import { useAppDispatch, useAppSelector } from '../store/hooks' // [AI]
-import { fetchLessonsByCourse, fetchLessonById } from '../store/slices/lessonsSlice' // [AI]
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { fetchLessonsByCourse, fetchLessonById } from '../store/slices/lessonsSlice'
 
 export const LessonPage: React.FC<{ lesson?: Lesson }> = ({ lesson: propLesson }) => {
   const { id } = useParams()
   const [completed, setCompleted] = useState(false)
-  const dispatch = useAppDispatch() // [AI]
-  const navigate = useNavigate() // [AI]
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const numericId = Number(id)
 
   // Resolve current lesson from prop → store.byId → store.byCourse
@@ -28,17 +28,17 @@ export const LessonPage: React.FC<{ lesson?: Lesson }> = ({ lesson: propLesson }
   const lesson = propLesson || lessonFromId || lessonFromCourse
   const courseId = lesson?.courseId
 
-  // [AI] Ensure lessons for this course are loaded
+  // Ensure lessons for this course are loaded
   useEffect(() => {
     if (courseId) dispatch(fetchLessonsByCourse(courseId))
   }, [dispatch, courseId])
 
-  // Ensure single lesson is loaded if not present
+  // Ensure single lesson is loaded if missing
   useEffect(() => {
     if (!lesson && numericId) dispatch(fetchLessonById(numericId))
   }, [dispatch, lesson, numericId])
 
-  // [AI] Determine ordered list within the same course
+  // Order lessons in the course
   const courseLessons = (courseId ? useAppSelector(s => s.lessons.byCourse[courseId]) : []) || []
   const ordered = useMemo(() => {
     return [...courseLessons].sort((a, b) => {
@@ -54,7 +54,7 @@ export const LessonPage: React.FC<{ lesson?: Lesson }> = ({ lesson: propLesson }
 
   const markdownContent = (lesson as any)?.content || `# Lesson ${numericId}\n\nContent will appear here when available.`
 
-  // Map difficulty → color pill
+  // Difficulty color
   const difficultyColor = (difficulty?: string) => {
     switch (difficulty?.toLowerCase()) {
       case 'beginner':
@@ -94,7 +94,7 @@ export const LessonPage: React.FC<{ lesson?: Lesson }> = ({ lesson: propLesson }
 
         {/* Lesson Image */}
         <div className="relative mb-6 overflow-hidden rounded-xl shadow-md">
-          {/* [AI] Support both image and imageUrl */}
+          {/* Support common image keys */}
           <img
             src={(lesson as any).imageUrl || (lesson as any).image || (lesson as any).image_url || 'https://picsum.photos/800/400'}
             alt={lesson.title}
@@ -114,7 +114,7 @@ export const LessonPage: React.FC<{ lesson?: Lesson }> = ({ lesson: propLesson }
           <Button variant="primary" onClick={() => setCompleted(!completed)}>
             {completed ? '✓ Completed' : 'Mark as Complete'}
           </Button>
-          {/* [AI] Prev/Next navigation */}
+          {/* Prev/Next navigation */}
           {prevLesson && (
             <Link to={`/lessons/${prevLesson.id}`} className="btn-secondary">← Previous Lesson</Link>
           )}

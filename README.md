@@ -5,6 +5,23 @@ This exercise evaluates your ability to work with React, TypeScript, API integra
 
 **Estimated Time: 4 hours**
 
+## Implementation (Brief)
+- Backend (Flask)
+  - CORS enabled. API key auth via `Authorization: Bearer <key>` (see `backend/config.py`).
+  - Added routes for lessons: `/api/courses/<course_id>/lessons` and `/api/lessons/<id>`.
+  - Uses repository + DTO layers to serve clean JSON from SQLite.
+
+- Frontend (React + TS + Vite)
+  - Replaced dummy data with Axios calls in `src/services/api.ts`.
+  - Redux Toolkit slices for `courses`, `lessons` (simple caching), and `progress` (persisted to `localStorage`).
+  - Pages dispatch thunks, show loading/error states, and handle invalid IDs.
+  - Lesson navigation uses `order/lessonOrder` with fallback to `id`.
+  - Optional env: `VITE_API_BASE_URL`, `VITE_API_KEY`.
+
+- Why this setup
+  - Keeps components lean, types predictable, and API details centralized.
+  - Light caching reduces calls without extra complexity.
+
 ## Setup Instructions
 
 ### 1. Repository Setup

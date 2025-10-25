@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit' // [AI]
+import type { PayloadAction } from '@reduxjs/toolkit'
 import type { Course } from '../../types/course'
 import { getCourses as apiGetCourses } from '../../services/api'
 
@@ -17,7 +17,7 @@ const initialState: CoursesState = {
   lastFetchedAt: null,
 }
 
-// [AI] Basic caching: skip fetch if within 60s
+// Basic caching: skip fetch if within 60s
 export const fetchCourses = createAsyncThunk<Course[], void, { state: { courses: CoursesState } }>(
   'courses/fetchAll',
   async () => {

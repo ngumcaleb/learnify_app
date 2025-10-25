@@ -15,7 +15,7 @@ const CourseDetailsWrapper: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const courseId = id ? Number(id) : 0
   const dispatch = useAppDispatch()
-  // [AI] Select from Redux with fallback to dummy
+  // Select from Redux
   const { items: courseItems, status: courseStatus, error: courseError } = useAppSelector(s => s.courses)
   const courseFromStore = courseItems.find(c => c.id === courseId)
   const lessonsState = useAppSelector(s => s.lessons)

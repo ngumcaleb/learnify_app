@@ -1,7 +1,7 @@
 import type { Course } from '../types/course'
 import type { Lesson } from '../types/lesson'
 import axios from 'axios'
-import type { InternalAxiosRequestConfig } from 'axios' // [AI]
+import type { InternalAxiosRequestConfig } from 'axios'
 
 
 const BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:5000/api'
@@ -13,7 +13,7 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config
 })
 
-// [AI] Normalize variant response shapes
+// Normalize response shapes
 function unwrapArray<T>(data: any, key: string): T[] {
   if (Array.isArray(data)) return data as T[]
   if (data && Array.isArray(data[key])) return data[key] as T[]

@@ -3,7 +3,7 @@ import coursesReducer from './slices/coursesSlice'
 import lessonsReducer from './slices/lessonsSlice'
 import progressReducer from './slices/progressSlice'
 
-// [AI] Centralized store configuration
+// Store configuration
 export const store = configureStore({
   reducer: {
     courses: coursesReducer,

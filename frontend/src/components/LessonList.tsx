@@ -32,7 +32,7 @@ export const LessonList: React.FC<{ lessons?: Lesson[] }> = ({ lessons = [] }) =
           <div className="flex flex-col h-full">
             {/* Image */}
             <div className="relative h-40 mb-4 overflow-hidden rounded-lg">
-              {/* [AI] Support imageUrl, image, and image_url */}
+              {/* Support imageUrl, image, image_url */}
               <img
                 src={(lesson as any).imageUrl || (lesson as any).image || (lesson as any).image_url || 'https://via.placeholder.com/400x200?text=Lesson+Image'}
                 alt={lesson.title}

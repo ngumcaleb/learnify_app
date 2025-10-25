@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit' // [AI]
+import type { PayloadAction } from '@reduxjs/toolkit'
 
 export interface ProgressState {
   completedByLessonId: Record<number, boolean>
 }
 
-// [AI] Load persisted state
+// Load persisted state
 function loadState(): ProgressState {
   try {
     const raw = localStorage.getItem('learnify_progress')

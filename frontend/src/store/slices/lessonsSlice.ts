@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit' // [AI]
+import type { PayloadAction } from '@reduxjs/toolkit'
 import type { Lesson } from '../../types/lesson'
 import { getLessonsByCourse as apiGetLessonsByCourse } from '../../services/api'
 import { getLesson as apiGetLesson } from '../../services/api'
@@ -24,7 +24,7 @@ const initialState: LessonsState = {
   errorById: {},
 }
 
-// [AI] Basic per-course caching: skip fetch if within 60s
+// Per-course caching: skip if fetched within 60s
 export const fetchLessonsByCourse = createAsyncThunk<Lesson[], number, { state: { lessons: LessonsState } }>(
   'lessons/fetchByCourse',
   async (courseId: number) => {
