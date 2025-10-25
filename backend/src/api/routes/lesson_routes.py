@@ -7,7 +7,8 @@ lesson_bp = Blueprint('lesson', __name__)
 
 # Initialize dependencies
 lesson_repository = SQLiteLessonRepository()
-get_lessons_by_course = GetLessonsByCourse(lesson_repository)
+# [AI] Avoid name collision with route function
+get_lessons_by_course_uc = GetLessonsByCourse(lesson_repository)
 
 
 @lesson_bp.route('/lessons', methods=['GET'])
@@ -44,8 +45,18 @@ def get_lesson(lesson_id):
 @require_api_key
 def get_lessons_by_course(course_id):
     """Get all lessons for a specific course"""
-    # TODO: Implement this endpoint
-    # 1. Use SQLiteLessonRepository.get_by_course_id(course_id)
-    # 2. Return lessons array or 404 if course doesn't exist
-    # 3. Handle case where course exists but has no lessons
-    pass
+    # [AI] Check course existence
+    from ...infrastructure.repositories.sqlite_course_repository import SQLiteCourseRepository
+    course_repo = SQLiteCourseRepository()
+    course = course_repo.get_by_id(course_id)
+    if course is None:
+        return jsonify({
+            'error': {
+                'code': 'COURSE_NOT_FOUND',
+                'message': 'The requested course does not exist'
+            }
+        }), 404
+
+    # [AI] Use use case to fetch lessons (returns list[dict])
+    lessons = get_lessons_by_course_uc.execute(course_id)
+    return jsonify(lessons)

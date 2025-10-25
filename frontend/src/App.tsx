@@ -1,28 +1,46 @@
 import { Routes, Route, useParams } from 'react-router-dom'
+import { useEffect } from 'react'
 import LessonPage from './pages/LessonPage'
 import Navbar from './components/NavBar'
 import Footer from './components/Footer'
 import { DarkModeProvider } from './context/DarkModeContext'
 import { CourseDetails } from './pages/CourseDetails'
 import { Home } from './pages/Home'
-import courses from './dummydata/courses'
-import lessons from './dummydata/lessons'
-import type { Course } from './types/course'
-import type { Lesson } from './types/lesson'
+import { useAppDispatch, useAppSelector } from './store/hooks'
+import { fetchCourses } from './store/slices/coursesSlice'
+import { fetchLessonsByCourse } from './store/slices/lessonsSlice'
 
 // Wrapper components to handle routing logic
-const CourseDetailsWrapper: React.FC<{ courses: Course[]; lessons: Lesson[] }> = ({ courses, lessons }) => {
+const CourseDetailsWrapper: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const courseId = id ? Number(id) : 0
-  const course = courses[courseId] || courses[0]
-  return <CourseDetails course={course} lessons={lessons} />
+  const dispatch = useAppDispatch()
+  // [AI] Select from Redux with fallback to dummy
+  const { items: courseItems, status: courseStatus, error: courseError } = useAppSelector(s => s.courses)
+  const courseFromStore = courseItems.find(c => c.id === courseId)
+  const lessonsState = useAppSelector(s => s.lessons)
+  const courseLessonsFromStore = lessonsState.byCourse[courseId] || []
+  const lessonsStatus = lessonsState.statusByCourse[courseId]
+  const lessonsError = lessonsState.errorByCourse[courseId]
+
+  const course = courseFromStore
+  const courseLessons = courseLessonsFromStore
+
+  useEffect(() => {
+    dispatch(fetchCourses())
+    dispatch(fetchLessonsByCourse(courseId))
+  }, [dispatch, courseId])
+
+  const loading = courseStatus === 'loading' || lessonsStatus === 'loading'
+  const error = lessonsError || courseError || null
+  if (loading) return <div className="text-gray-600 dark:text-gray-300">Loading...</div>
+  if (error) return <div className="text-red-600 dark:text-red-400">{error}</div>
+  return <CourseDetails course={course} lessons={courseLessons} />
 }
 
-const LessonPageWrapper: React.FC<{ lessons: Lesson[] }> = ({ lessons }) => {
-  const { id } = useParams<{ id: string }>()
-  const lessonId = id ? Number(id) : 0
-  const lesson = lessons[lessonId] || lessons[0]
-  return <LessonPage lesson={lesson} />
+const LessonPageWrapper: React.FC = () => {
+  // Let LessonPage resolve the lesson from store or fetch by id
+  return <LessonPage />
 }
 
 export default function App() {
@@ -35,12 +53,12 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route
               path="/courses/:id"
-              element={<CourseDetailsWrapper courses={courses} lessons={lessons} />}
+              element={<CourseDetailsWrapper />}
             />
 
             <Route
               path="/lessons/:id"
-              element={<LessonPageWrapper lessons={lessons} />}
+              element={<LessonPageWrapper />}
             />
         </Routes>
       </main>

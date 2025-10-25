@@ -32,8 +32,9 @@ export const LessonList: React.FC<{ lessons?: Lesson[] }> = ({ lessons = [] }) =
           <div className="flex flex-col h-full">
             {/* Image */}
             <div className="relative h-40 mb-4 overflow-hidden rounded-lg">
+              {/* [AI] Support imageUrl, image, and image_url */}
               <img
-                src={lesson.imageUrl || 'https://via.placeholder.com/400x200?text=Lesson+Image'}
+                src={(lesson as any).imageUrl || (lesson as any).image || (lesson as any).image_url || 'https://via.placeholder.com/400x200?text=Lesson+Image'}
                 alt={lesson.title}
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               />
@@ -59,7 +60,7 @@ export const LessonList: React.FC<{ lessons?: Lesson[] }> = ({ lessons = [] }) =
               </div>
 
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
-                {lesson.description || 'No description available for this lesson.'}
+                {(lesson as any).description || 'No description available for this lesson.'}
               </p>
             </div>
 

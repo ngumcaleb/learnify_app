@@ -1,12 +1,24 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from '../components/Button'
 import type { Course } from '../types/course'
 import { CourseList } from '../components/CourseList'
-import courses from '../dummydata/courses'
-
-const mockCourses: Course[] = courses
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { fetchCourses } from '../store/slices/coursesSlice'
 
 export const Home: React.FC = () => {
+    const dispatch = useAppDispatch()
+    const { items: storeItems, status, error } = useAppSelector(s => s.courses)
+    const [items, setItems] = useState<Course[]>([])
+    const loading = status === 'loading'
+
+    useEffect(() => {
+        dispatch(fetchCourses())
+    }, [dispatch])
+
+    useEffect(() => {
+        setItems(storeItems || [])
+    }, [storeItems])
+
     return (
         <div className="animate-fade-in">
             
@@ -33,11 +45,19 @@ export const Home: React.FC = () => {
                     <Button variant="secondary">View All</Button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {mockCourses.map((course) => (
-                        <CourseList key={course.id} course={course} />
-                    ))}
-                </div>
+                {loading && (
+                    <div className="text-gray-600 dark:text-gray-300">Loading...</div>
+                )}
+                {error && !loading && (
+                    <div className="text-red-600 dark:text-red-400">{error}</div>
+                )}
+                {!loading && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {items.map((course) => (
+                            <CourseList key={course.id} course={course} />
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* Stats Section */}

@@ -1,10 +1,11 @@
 export interface Lesson {
-  id: number
-  title: string
-  content?: string
-  difficulty?: 'easy' | 'medium' | 'hard'
-  courseId?: number
-  imageUrl?: string
-  description?: string
+  id: number;
+  courseId: number;
+  title: string;
+  content: string;
+  duration: string;
+  image:string;
+  order: number;
+  completed?: boolean;
+  difficulty?: string; // Changed from "easy" | "medium" | "hard" to string
 }
-

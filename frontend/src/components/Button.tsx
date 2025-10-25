@@ -1,30 +1,48 @@
 import React from 'react'
 
-type Props = {
+interface Props {
+  variant?: 'primary' | 'secondary' | 'outline'
+  size?: 'sm' | 'md' | 'lg'
   children: React.ReactNode
   onClick?: () => void
+  disabled?: boolean
+  type?: 'button' | 'submit' | 'reset'
   className?: string
-  variant?: 'primary' | 'secondary' | 'outline'
 }
 
-export const Button: React.FC<Props> = ({
+const Button: React.FC<Props> = ({
+  variant = 'primary',
+  size = 'md',
   children,
   onClick,
-  className = '',
-  variant = 'primary'
+  disabled = false,
+  type = 'button',
+  className = ''
 }) => {
-  const baseClasses = 'px-6 py-2.5 rounded-lg font-medium transition-all duration-200'
-
+  const baseClasses = 'font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2'
+  
   const variantClasses = {
-    primary: 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg shadow-blue-500/30 dark:shadow-blue-500/20',
-    secondary: 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100',
-    outline: 'bg-transparent border-2 border-blue-500 dark:border-blue-400 text-blue-500 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+    primary: 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500',
+    secondary: 'bg-gray-600 hover:bg-gray-700 text-white focus:ring-gray-500',
+    outline: 'border border-gray-300 hover:bg-gray-50 text-gray-700 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-300 focus:ring-gray-500'
   }
+
+  const sizeClasses = {
+    sm: 'px-3 py-1.5 text-sm',
+    md: 'px-4 py-2 text-base',
+    lg: 'px-6 py-3 text-lg'
+  }
+
+  const disabledClasses = disabled 
+    ? 'opacity-50 cursor-not-allowed' 
+    : ''
 
   return (
     <button
+      type={type}
+      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${className}`}
       onClick={onClick}
-      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+      disabled={disabled}
     >
       {children}
     </button>

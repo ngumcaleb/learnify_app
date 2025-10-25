@@ -1,20 +1,58 @@
-import React, { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import React, { useEffect, useMemo, useState } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import Card from '../components/Card'
 import Button from '../components/Button'
 import ReactMarkdown from 'react-markdown'
-import lessons from '../dummydata/lessons'
 import type { Lesson } from '../types/lesson'
-import { generateLessonMarkdown } from '../dummydata/dummyMD'
-// Mock lesson content (you can replace with fetched content later)
-const mockLesson = lessons[0]
+import { useAppDispatch, useAppSelector } from '../store/hooks' // [AI]
+import { fetchLessonsByCourse, fetchLessonById } from '../store/slices/lessonsSlice' // [AI]
 
 export const LessonPage: React.FC<{ lesson?: Lesson }> = ({ lesson: propLesson }) => {
   const { id } = useParams()
   const [completed, setCompleted] = useState(false)
+  const dispatch = useAppDispatch() // [AI]
+  const navigate = useNavigate() // [AI]
+  const numericId = Number(id)
 
-  const lesson = propLesson || lessons.find(l => l.id === Number(id)) || mockLesson
-  const markdownContent = generateLessonMarkdown(lesson.title, lesson.id)
+  // Resolve current lesson from prop → store.byId → store.byCourse
+  const store = useAppSelector(s => s.lessons)
+  const lessonFromId = store.byId[numericId]
+  const lessonFromCourse = useMemo(() => {
+    for (const cid in store.byCourse) {
+      const found = store.byCourse[Number(cid)]?.find(l => l.id === numericId)
+      if (found) return found
+    }
+    return undefined
+  }, [store.byCourse, numericId])
+
+  const lesson = propLesson || lessonFromId || lessonFromCourse
+  const courseId = lesson?.courseId
+
+  // [AI] Ensure lessons for this course are loaded
+  useEffect(() => {
+    if (courseId) dispatch(fetchLessonsByCourse(courseId))
+  }, [dispatch, courseId])
+
+  // Ensure single lesson is loaded if not present
+  useEffect(() => {
+    if (!lesson && numericId) dispatch(fetchLessonById(numericId))
+  }, [dispatch, lesson, numericId])
+
+  // [AI] Determine ordered list within the same course
+  const courseLessons = (courseId ? useAppSelector(s => s.lessons.byCourse[courseId]) : []) || []
+  const ordered = useMemo(() => {
+    return [...courseLessons].sort((a, b) => {
+      const ao = (a as any).order ?? (a as any).lessonOrder ?? a.id
+      const bo = (b as any).order ?? (b as any).lessonOrder ?? b.id
+      return ao - bo
+    })
+  }, [courseLessons])
+
+  const idx = lesson ? ordered.findIndex(l => l.id === lesson.id) : -1
+  const prevLesson = idx > 0 ? ordered[idx - 1] : undefined
+  const nextLesson = idx >= 0 && idx < ordered.length - 1 ? ordered[idx + 1] : undefined
+
+  const markdownContent = (lesson as any)?.content || `# Lesson ${numericId}\n\nContent will appear here when available.`
 
   // Map difficulty → color pill
   const difficultyColor = (difficulty?: string) => {
@@ -30,13 +68,17 @@ export const LessonPage: React.FC<{ lesson?: Lesson }> = ({ lesson: propLesson }
     }
   }
 
+  if (!lesson) {
+    return <div className="text-gray-600 dark:text-gray-300">Loading...</div>
+  }
+
   return (
     <div className="animate-fade-in max-w-5xl mx-auto">
       {/* Breadcrumb */}
       <div className="mb-6 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-100">
         <Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400">Home</Link>
         <span>/</span>
-        <Link to="/courses/1" className="hover:text-blue-600 dark:hover:text-blue-400">Course</Link>
+        <Link to={`/courses/${courseId || ''}`} className="hover:text-blue-600 dark:hover:text-blue-400">Course</Link>
         <span>/</span>
         <span className="text-gray-900 dark:text-white">Lesson {id}</span>
       </div>
@@ -52,8 +94,9 @@ export const LessonPage: React.FC<{ lesson?: Lesson }> = ({ lesson: propLesson }
 
         {/* Lesson Image */}
         <div className="relative mb-6 overflow-hidden rounded-xl shadow-md">
+          {/* [AI] Support both image and imageUrl */}
           <img
-            src={lesson.imageUrl}
+            src={(lesson as any).imageUrl || (lesson as any).image || (lesson as any).image_url || 'https://picsum.photos/800/400'}
             alt={lesson.title}
             className="w-full h-64 object-cover transition-transform duration-300 hover:scale-105"
           />
@@ -61,9 +104,6 @@ export const LessonPage: React.FC<{ lesson?: Lesson }> = ({ lesson: propLesson }
 
         {/* Markdown Body */}
         <div className="prose dark:prose-invert max-w-none text-gray-900 dark:text-white">
-          {/* <ReactMarkdown>
-            {lesson.content}
-          </ReactMarkdown> */}
           <ReactMarkdown>
             {markdownContent}
           </ReactMarkdown>
@@ -74,7 +114,15 @@ export const LessonPage: React.FC<{ lesson?: Lesson }> = ({ lesson: propLesson }
           <Button variant="primary" onClick={() => setCompleted(!completed)}>
             {completed ? '✓ Completed' : 'Mark as Complete'}
           </Button>
-          <Button variant="secondary">Next Lesson →</Button>
+          {/* [AI] Prev/Next navigation */}
+          {prevLesson && (
+            <Link to={`/lessons/${prevLesson.id}`} className="btn-secondary">← Previous Lesson</Link>
+          )}
+          {nextLesson && (
+            <Button variant="secondary" onClick={() => navigate(`/lessons/${nextLesson.id}`)}>
+              Next Lesson →
+            </Button>
+          )}
         </div>
       </Card>
 
@@ -103,3 +151,4 @@ export const LessonPage: React.FC<{ lesson?: Lesson }> = ({ lesson: propLesson }
 }
 
 export default LessonPage
+
