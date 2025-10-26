@@ -1,6 +1,5 @@
 import os
 
-
 class Config:
     """Flask application configuration"""
 
@@ -10,7 +9,9 @@ class Config:
     DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
     # Database settings
-    DATABASE_PATH = os.getenv('DATABASE_PATH', 'learnify.db')
+    # Works offline using backend/learnify.db
+    # On PythonAnywhere, override with environment variable DATABASE_PATH
+    DATABASE_PATH = os.environ.get('DATABASE_PATH', 'learnify.db')
 
     # API settings
     VALID_API_KEYS = [
